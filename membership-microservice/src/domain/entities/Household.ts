@@ -1,4 +1,4 @@
-// src/domain/entities/Household.ts
+// src/domain/entities/household.ts
 
 export class Household {
   public isCancelled: boolean;
