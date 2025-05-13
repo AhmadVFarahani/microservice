@@ -2,25 +2,16 @@
 
 import "reflect-metadata";
 import Fastify from "fastify";
-import { container } from "tsyringe";
-import { HouseholdService } from "./application/services/household.service";
-import { IHouseholdService } from "./application/interfaces/ihousehold.Service";
-import { HouseholdRepository } from "./infrastructure/repositories/household.repository";
-import { IHouseholdRepository } from "./application/interfaces/ihousehold.Repository"; // اگر منتقل شده باشه
+
+import "reflect-metadata";
+import "./infrastructure/di/container";
+
 import healthRoutes from "./presentation/controllers/health.controller"; // to be created later
 import householdRoutes from "./presentation/controllers/household.controller"; // to be created later
 import swaggerPlugin from "./plugins/wagger";
 import { runMigrations } from "./infrastructure/database/migration";
 
 const app = Fastify({ logger: true });
-
-// DI Registrations
-container.register<IHouseholdRepository>("IHouseholdRepository", {
-  useClass: HouseholdRepository,
-});
-container.register<IHouseholdService>("IHouseholdService", {
-  useClass: HouseholdService,
-});
 
 // Plugins
 app.register(swaggerPlugin);
