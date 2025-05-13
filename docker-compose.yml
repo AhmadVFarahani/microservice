@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  membership:
+    container_name: membership
+    build: .\membership-microservice
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - SQL_SERVER=localhost
+      - SQL_USER=sa
+      - SQL_PASSWORD=YourStrong!Passw0rd
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    restart: always
+    environment:
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"

@@ -37,7 +37,7 @@ async function start() {
 
     // ✅ Step 6: Start server
     const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
-    await app.listen({ port: PORT });
+    await app.listen({ port: PORT, host: "0.0.0.0" });
 
     console.log(`🚀 Server running on http://localhost:${PORT}`);
   } catch (err) {

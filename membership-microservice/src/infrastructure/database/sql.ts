@@ -12,8 +12,8 @@ export async function getSqlPool(): Promise<ConnectionPool> {
 
   pool = await new sql.ConnectionPool({
     user: "sa",
-    password: "Aa@12345",
-    server: "localhost",
+    password: "YourStrong!Passw0rd",
+    server: "sqlserver",
     port: 1433,
     database: "MembershipDB",
     options: {
