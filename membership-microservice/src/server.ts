@@ -2,31 +2,48 @@
 
 import "reflect-metadata";
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 
-import "reflect-metadata";
 import "./infrastructure/di/container";
-
-import healthRoutes from "./presentation/controllers/health.controller"; // to be created later
-import householdRoutes from "./presentation/routes/household.route"; // to be created later
-import swaggerPlugin from "./plugins/wagger";
+import healthRoutes from "./presentation/controllers/health.controller";
+import householdRoutes from "./presentation/routes/household.route";
+import swaggerPlugin from "./plugins/swagger";
 import { runMigrations } from "./infrastructure/database/migration";
+import { globalErrorHandler } from "./plugins/global-error-handler";
 
-const app = Fastify({ logger: true });
-
-// Plugins
-app.register(swaggerPlugin);
-
-// Routes (we will create these soon)
-app.register(healthRoutes, { prefix: "/health" });
-app.register(householdRoutes, { prefix: "/households" });
-
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const app = Fastify({
+  logger: true,
+});
 
 async function start() {
-  await runMigrations(); // ✅ Add this line
+  try {
+    // ✅ Step 1: Database migrations
+    await runMigrations();
 
-  await app.listen({ port: PORT });
-  console.log(`🚀 Server running on port ${PORT}`);
+    // ✅ Step 2: Register CORS (important for Swagger + Frontend)
+    await app.register(cors, {
+      origin: true, // ✅ allow all origins (or specify e.g. ["http://localhost:3000"])
+    });
+
+    // ✅ Step 3: Plugins
+    await app.register(swaggerPlugin);
+
+    // ✅ Step 4: Global error handler
+    await globalErrorHandler(app);
+
+    // ✅ Step 5: Routes
+    app.register(healthRoutes, { prefix: "/health" });
+    app.register(householdRoutes, { prefix: "/households" });
+
+    // ✅ Step 6: Start server
+    const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+    await app.listen({ port: PORT });
+
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1); // ✅ exit if critical error (ex: DB connection fails)
+  }
 }
 
 start();
