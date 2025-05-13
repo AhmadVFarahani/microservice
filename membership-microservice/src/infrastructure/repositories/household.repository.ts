@@ -139,6 +139,9 @@ export class HouseholdRepository implements IHouseholdRepository {
   private mapToHousholdWithMembers(rows: any): Household {
     const household: Household = this.mapToHoushold(rows[0]);
     for (const member of rows) {
+      if (!member.MemberId) {
+        continue; // Skip if no member ID
+      }
       household.members!.push(
         new Member(
           member.MemberId,

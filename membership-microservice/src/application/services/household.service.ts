@@ -82,7 +82,6 @@ export class HouseholdService implements IHouseholdService {
   // Helper to map entity → DTO
 
   private mapToDto(h: Household): HouseholdDto {
-    console.log("Household ==> ", h);
     const householdDto = {
       id: h.id,
       streetAddress: h.streetAddress,
@@ -109,7 +108,6 @@ export class HouseholdService implements IHouseholdService {
         updatedAt: member.updatedAt,
       })),
     };
-    console.log("Household with members ==> ", householdDto);
 
     return householdDto;
   }

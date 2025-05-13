@@ -7,7 +7,7 @@ import "reflect-metadata";
 import "./infrastructure/di/container";
 
 import healthRoutes from "./presentation/controllers/health.controller"; // to be created later
-import householdRoutes from "./presentation/controllers/household.controller"; // to be created later
+import householdRoutes from "./presentation/routes/household.route"; // to be created later
 import swaggerPlugin from "./plugins/wagger";
 import { runMigrations } from "./infrastructure/database/migration";
 
