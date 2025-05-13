@@ -1,8 +1,15 @@
 // src/presentation/controllers/household.controller.ts
 import { FastifyReply, FastifyRequest } from "fastify";
 import { container, injectable } from "tsyringe";
-import { HouseholdCreateCommand } from "../../application/commands/household-create-command";
-import { MemberCreateCommand } from "../../application/commands/member-create-command";
+import {
+  HouseholdCreateCommand,
+  validateHouseholdCreate,
+} from "../../application/commands/household-create-command";
+import {
+  MemberCreateCommand,
+  validateMemberCreate,
+} from "../../application/commands/member-create-command";
+
 import { IHouseholdService } from "../../application/interfaces/ihousehold.Service";
 
 @injectable()
@@ -27,6 +34,15 @@ export class HouseholdController {
 
   create = async (req: FastifyRequest, reply: FastifyReply) => {
     const command = req.body as HouseholdCreateCommand;
+
+    // ✅ VALIDATION
+    if (!validateHouseholdCreate(command)) {
+      return reply.status(400).send({
+        message: "Validation error",
+        errors: validateHouseholdCreate.errors,
+      });
+    }
+
     const result = await this.service.create(command);
     reply.send(result);
   };
@@ -40,6 +56,14 @@ export class HouseholdController {
   addMember = async (req: FastifyRequest, reply: FastifyReply) => {
     const id = Number((req.params as any).id);
     const command = req.body as MemberCreateCommand;
+
+    // ✅ VALIDATION
+    if (!validateMemberCreate(command)) {
+      return reply.status(400).send({
+        message: "Validation error",
+        errors: validateMemberCreate.errors,
+      });
+    }
 
     await this.service.addMember(id, {
       ...command,
