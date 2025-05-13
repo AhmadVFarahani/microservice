@@ -1,8 +1,8 @@
 // src/domain/entities/household.ts
 
+import { Member } from "./member";
+
 export class Household {
-  public isCancelled: boolean;
-  public cancelledAt: Date | null;
 
   constructor(
     public id: number | null,
@@ -13,7 +13,10 @@ export class Household {
     public country: string = "Canada",
     public phoneNumber?: string,
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: Date,
+    public members: Member[] = [],
+    public isCancelled: boolean = false,
+    public cancelledAt: Date | null = null
   ) {
     // Entity must validate itself
     if (!streetAddress || streetAddress.length < 5) {
@@ -48,5 +51,33 @@ export class Household {
     }
     this.isCancelled = true;
     this.cancelledAt = new Date();
+  }
+
+  // ✅ domain behavior: add member
+  public addMember(member: Member) {
+    const exists = this.members.some((m) => m.id === member.id);
+    if (exists) {
+      throw new Error("Member with same ID already exists in this household");
+    }
+    this.members.push(member);
+  }
+
+  // ✅ domain behavior: remove member
+  public removeMember(memberId: number) {
+    const index = this.members.findIndex((m) => m.id === memberId);
+    if (index === -1) {
+      throw new Error("Member not found in this household");
+    }
+    this.members.splice(index, 1);
+  }
+
+  // ✅ domain behavior: get all members
+  public getMembers(): Member[] {
+    return [...this.members]; // return a copy to avoid external mutation
+  }
+
+  // ✅ domain behavior: get member by ID
+  public getMemberById(memberId: number): Member | undefined {
+    return this.members.find((m) => m.id === memberId);
   }
 }

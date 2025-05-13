@@ -3,12 +3,12 @@
 import "reflect-metadata";
 import Fastify from "fastify";
 import { container } from "tsyringe";
-import { HouseholdService } from "./application/services/HouseholdService";
-import { IHouseholdService } from "./application/interfaces/iHouseholdService";
-import { HouseholdRepository } from "./infrastructure/repositories/householdRepository";
-import { IHouseholdRepository } from "./application/interfaces/iHouseholdRepository"; // اگر منتقل شده باشه
-import healthRoutes from "./presentation/controllers/healthController"; // to be created later
-import householdRoutes from "./presentation/controllers/householdController"; // to be created later
+import { HouseholdService } from "./application/services/household.service";
+import { IHouseholdService } from "./application/interfaces/ihousehold.Service";
+import { HouseholdRepository } from "./infrastructure/repositories/household.repository";
+import { IHouseholdRepository } from "./application/interfaces/ihousehold.Repository"; // اگر منتقل شده باشه
+import healthRoutes from "./presentation/controllers/health.controller"; // to be created later
+import householdRoutes from "./presentation/controllers/household.controller"; // to be created later
 import swaggerPlugin from "./plugins/wagger";
 import { runMigrations } from "./infrastructure/database/migration";
 
