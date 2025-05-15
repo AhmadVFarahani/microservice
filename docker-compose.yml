@@ -1,8 +1,17 @@
 version: "3.8"
 
 services:
-  membership:
-    container_name: membership
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    restart: always
+    environment:
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+  membership-api:
+    container_name: membership-api
     build: .\membership-microservice
     ports:
       - "3000:3000"
@@ -13,13 +22,11 @@ services:
       - SQL_PASSWORD=YourStrong!Passw0rd
     depends_on:
       - sqlserver
-
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: sqlserver
-    restart: always
-    environment:
-      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
-      ACCEPT_EULA: "Y"
+  ui:
+    container_name: ui
+    build:
+      context: .\ui
     ports:
-      - "1433:1433"
+      - "3001:3001"
+    depends_on:
+      - membership-api
