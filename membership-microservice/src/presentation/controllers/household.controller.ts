@@ -55,7 +55,12 @@ export class HouseholdController {
 
   addMember = async (req: FastifyRequest, reply: FastifyReply) => {
     const id = Number((req.params as any).id);
-    const command = req.body as MemberCreateCommand;
+    const body = req.body as MemberCreateCommand;
+
+    const command: MemberCreateCommand = {
+      ...body,
+      householdId: id,
+    };
 
     // ✅ VALIDATION
     if (!validateMemberCreate(command)) {
