@@ -55,21 +55,11 @@ export default function HouseholdDetailPage({ householdId }: Props) {
     setSelectedMember(null);
   };
 
-  const handleSaveMember = async (data: Member) => {
+  const handleSaveMember = async (data: MemberCreateCommand) => {
     if (!selectedMember) {
       // ✅ Create new member
-      const requestData: MemberCreateCommand = {
-        firstName: data.firstName ?? "",
-        lastName: data.lastName ?? "",
-        dateOfBirth: data.dateOfBirth ?? "",
-        membershipType: data.membershipType ?? "basic",
-        membershipStartDate: data.membershipStartDate ?? "",
-        membershipExpiryDate: data.membershipExpiryDate ?? "",
-        email: data.email ?? "",
-        phoneNumber: data.phoneNumber ?? "",
-      };
 
-      await addMemberToHousehold(Number(householdId), requestData);
+      await addMemberToHousehold(Number(householdId), data);
       await mutate(`household-${householdId}`);
       setModalOpen(false);
     } else {

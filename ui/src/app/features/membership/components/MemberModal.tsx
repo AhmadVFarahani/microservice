@@ -9,12 +9,13 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import type { Member } from "../types/member";
+import { MemberCreateCommand } from "../types/member-create-command";
 
 type MemberModalProps = {
   mode: "create" | "edit";
   open: boolean;
   onClose: () => void;
-  onSave: (data: Partial<Member>) => void;
+  onSave: (data: MemberCreateCommand) => void;
   member?: Member;
 };
 
@@ -25,7 +26,7 @@ export default function MemberModal({
   onSave,
   member,
 }: MemberModalProps) {
-  const [formData, setFormData] = useState<Partial<Member>>({
+  const [formData, setFormData] = useState<MemberCreateCommand>({
     firstName: "",
     lastName: "",
     email: "",

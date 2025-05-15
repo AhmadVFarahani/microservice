@@ -6,13 +6,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-
-type Member = {
-  id: number;
-  name: string;
-  email: string;
-  status: string;
-};
+import { Member } from "../types/member";
 
 type Props = {
   members: Member[];
@@ -29,9 +23,17 @@ export default function MemberCardList({ members, onEditMember }: Props) {
       {members.map((member) => (
         <Card key={member.id} variant="outlined">
           <CardContent>
-            <Typography variant="h6">{member.name}</Typography>
+            <Typography variant="h6">
+              {member.firstName} {member.lastName}
+            </Typography>
             <Typography>Email: {member.email}</Typography>
-            <Typography>Status: {member.status}</Typography>
+            <Typography>Phone: {member.phoneNumber}</Typography>
+            <Typography>Date of Birth: {member.dateOfBirth}</Typography>
+            <Typography>Membership Type: {member.membershipType}</Typography>
+            <Typography>
+              Membership: {member.membershipStartDate} →{" "}
+              {member.membershipExpiryDate}
+            </Typography>
 
             <Stack direction="row" spacing={1} mt={2}>
               <Button

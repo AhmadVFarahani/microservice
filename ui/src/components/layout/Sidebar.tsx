@@ -21,7 +21,7 @@ type SidebarProps = {
   onClose: () => void;
 };
 
-export default function Sidebar({ open, onClose }: SidebarProps) {
+export default function Sidebar({ open }: SidebarProps) {
   const pathname = usePathname(); // get current path to highlight active item
 
   const menuItems = [
