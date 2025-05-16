@@ -6,6 +6,7 @@ import sql from "mssql";
 import { getSqlPool } from "../database/sql";
 import { Household } from "../../domain/entities/household";
 import { Member } from "../../domain/entities/member";
+import { MemberUpdateCommand } from "../../application/commands/member-update-command";
 
 @injectable()
 export class HouseholdRepository implements IHouseholdRepository {
@@ -70,6 +71,38 @@ export class HouseholdRepository implements IHouseholdRepository {
     `);
 
     return result.recordset[0].Id;
+  }
+
+  async updateMember(member: Member): Promise<void> {
+    const pool = await getSqlPool();
+
+    const request = pool.request();
+    request.input("memberId", member.id);
+    request.input("householdId", member.householdId);
+    request.input("firstName", member.firstName);
+    request.input("lastName", member.lastName);
+    request.input("dateOfBirth", member.dateOfBirth);
+    request.input("membershipType", member.membershipType);
+    request.input("membershipStartDate", member.membershipStartDate);
+    request.input("membershipExpiryDate", member.membershipExpiryDate);
+    request.input("email", member.email || "");
+    request.input("phoneNumber", member.phoneNumber || "");
+    request.input("updatedAt", new Date());
+
+    await request.query(`
+    UPDATE Members
+    SET
+      firstName = @firstName,
+      lastName = @lastName,
+      dateOfBirth = @dateOfBirth,
+      membershipType = @membershipType,
+      membershipStartDate = @membershipStartDate,
+      membershipExpiryDate = @membershipExpiryDate,
+      email = @email,
+      phoneNumber = @phoneNumber,
+      updatedAt = @updatedAt
+    WHERE id = @memberId AND householdId = @householdId
+  `);
   }
 
   async save(household: Household): Promise<Household> {

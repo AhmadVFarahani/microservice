@@ -59,7 +59,7 @@ export const HouseholdListResponseSchema = {
   },
 };
 
-export const HouseholdCreateRequestSchema = {
+export const HouseholdCreateCommandSchema = {
   type: "object",
   required: ["streetAddress", "city", "province", "postalCode"],
   properties: {
@@ -72,7 +72,7 @@ export const HouseholdCreateRequestSchema = {
   },
 };
 
-export const MemberCreateRequestSchema = {
+export const MemberCreateCommandSchema = {
   type: "object",
   required: [
     "firstName",
@@ -94,5 +94,31 @@ export const MemberCreateRequestSchema = {
     membershipExpiryDate: { type: "string", format: "date" },
     email: { type: "string" },
     phoneNumber: { type: "string" },
+  },
+};
+export const MemberUpdateCommandSchema = {
+  type: "object",
+  required: [
+    "memberId",
+    "firstName",
+    "lastName",
+    "membershipType",
+    "dateOfBirth",
+    "membershipStartDate",
+    "membershipExpiryDate",
+  ],
+  properties: {
+    memberId: { type: "number" },
+    firstName: { type: "string" },
+    lastName: { type: "string" },
+    phoneNumber: { type: "string" },
+    dateOfBirth: { type: "string", format: "date" },
+    membershipType: {
+      type: "string",
+      enum: ["basic", "plus", "premier", "go", "client"],
+    },
+    membershipStartDate: { type: "string", format: "date" },
+    membershipExpiryDate: { type: "string", format: "date" },
+    email: { type: "string" },
   },
 };

@@ -3,6 +3,7 @@
 import { HouseholdDto } from "../dto/household-dto";
 import { HouseholdCreateCommand } from "../commands/household-create-command";
 import { MemberCreateCommand } from "../commands/member-create-command";
+import { MemberUpdateCommand } from "../commands/member-update-command";
 
 export interface IHouseholdService {
   getAll(): Promise<HouseholdDto[]>;
@@ -10,4 +11,8 @@ export interface IHouseholdService {
   create(command: HouseholdCreateCommand): Promise<HouseholdDto>;
   cancel(id: number): Promise<void>;
   addMember(householdId: number, command: MemberCreateCommand): Promise<void>;
+  updateMember(
+    householdId: number,
+    command: MemberUpdateCommand
+  ): Promise<void>;
 }

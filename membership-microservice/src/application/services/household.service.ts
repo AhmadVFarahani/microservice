@@ -8,6 +8,7 @@ import { IHouseholdRepository } from "../interfaces/ihousehold.Repository";
 import { Household } from "../../domain/entities/household";
 import { Member } from "../../domain/entities/member";
 import { MemberCreateCommand } from "../commands/member-create-command";
+import { MemberUpdateCommand } from "../commands/member-update-command";
 
 @injectable()
 export class HouseholdService implements IHouseholdService {
@@ -50,6 +51,30 @@ export class HouseholdService implements IHouseholdService {
 
     household.cancelHousehold();
     await this.repository.update(household);
+  }
+
+  async updateMember(
+    householdId: number,
+    command: MemberUpdateCommand
+  ): Promise<void> {
+    const household = await this.repository.getById(householdId);
+    if (!household) throw new Error("Household not found");
+
+    const member = household.members.find((m) => m.id === command.memberId);
+    if (!member) throw new Error("Member not found");
+
+    if (command.firstName) member.firstName = command.firstName;
+    if (command.lastName) member.lastName = command.lastName;
+    if (command.dateOfBirth) member.dateOfBirth = command.dateOfBirth;
+    if (command.membershipType) member.membershipType = command.membershipType;
+    if (command.membershipStartDate)
+      member.membershipStartDate = command.membershipStartDate;
+    if (command.membershipExpiryDate)
+      member.membershipExpiryDate = command.membershipExpiryDate;
+    if (command.email) member.email = command.email;
+    if (command.phoneNumber) member.phoneNumber = command.phoneNumber;
+
+    await this.repository.updateMember(member);
   }
 
   async addMember(

@@ -11,6 +11,10 @@ import {
 } from "../../application/commands/member-create-command";
 
 import { IHouseholdService } from "../../application/interfaces/ihousehold.Service";
+import {
+  MemberUpdateCommand,
+  validateMemberUpdate,
+} from "../../application/commands/member-update-command";
 
 @injectable()
 export class HouseholdController {
@@ -51,6 +55,47 @@ export class HouseholdController {
     const id = Number((req.params as any).id);
     await this.service.cancel(id);
     reply.status(204).send();
+  };
+
+  // ✅ UPDATE MEMBER
+  updateMember = async (req: FastifyRequest, reply: FastifyReply) => {
+    const householdId = Number((req.params as any).householdId);
+    const body = req.body as MemberUpdateCommand;
+    const command: MemberUpdateCommand = {
+      ...body,
+      householdId: householdId,
+    };
+
+    // ✅ VALIDATION
+    if (!validateMemberUpdate(command)) {
+      console.log("Validation errors:", validateMemberUpdate.errors);
+      return reply.status(400).send({
+        message: "Validation error",
+        errors: validateMemberUpdate.errors,
+      });
+    }
+    const parsedCommand = {
+      ...command,
+      dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : undefined,
+      membershipStartDate: body.membershipStartDate
+        ? new Date(body.membershipStartDate)
+        : undefined,
+      membershipExpiryDate: body.membershipExpiryDate
+        ? new Date(body.membershipExpiryDate)
+        : undefined,
+    };
+
+    try {
+      await this.service.updateMember(Number(householdId), parsedCommand);
+      reply.status(204).send();
+    } catch (err) {
+      if (err instanceof Error && err.message.includes("not found")) {
+        return reply.status(404).send({ message: err.message });
+      }
+
+      console.error(err);
+      return reply.status(500).send({ message: "Unexpected error" });
+    }
   };
 
   addMember = async (req: FastifyRequest, reply: FastifyReply) => {

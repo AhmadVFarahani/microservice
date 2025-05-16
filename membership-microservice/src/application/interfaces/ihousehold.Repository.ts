@@ -9,4 +9,5 @@ export interface IHouseholdRepository {
   save(household: Household): Promise<Household>;
   update(household: Household): Promise<void>;
   addMember(member: Member): Promise<void>;
+  updateMember(member: Member): Promise<void>;
 }

@@ -3,10 +3,11 @@
 import { FastifyInstance } from "fastify";
 import { HouseholdController } from "../controllers/household.controller";
 import {
+  HouseholdCreateCommandSchema,
   HouseholdListResponseSchema,
   HouseholdResponseSchema,
-  HouseholdCreateRequestSchema,
-  MemberCreateRequestSchema,
+  MemberCreateCommandSchema,
+  MemberUpdateCommandSchema,
 } from "../schemas/household.schemas";
 import { container } from "../../infrastructure/di/container";
 
@@ -52,7 +53,7 @@ export default async function (app: FastifyInstance) {
       schema: {
         description: "Create new household",
         tags: ["Households"],
-        body: HouseholdCreateRequestSchema,
+        body: HouseholdCreateCommandSchema,
         response: {
           200: HouseholdResponseSchema,
         },
@@ -91,12 +92,36 @@ export default async function (app: FastifyInstance) {
           properties: { id: { type: "number" } },
           required: ["id"],
         },
-        body: MemberCreateRequestSchema,
+        body: MemberCreateCommandSchema,
         response: {
           204: { type: "null" },
         },
       },
     },
     controller.addMember
+  );
+
+  app.patch(
+    "/:householdId",
+    {
+      schema: {
+        description: "Update an existing member of a household",
+        tags: ["Households"],
+        params: {
+          type: "object",
+          properties: {
+            householdId: { type: "number" },
+          },
+          required: ["householdId"],
+        },
+        body: MemberUpdateCommandSchema,
+        response: {
+          204: { type: "null" },
+          400: { type: "object", properties: { message: { type: "string" } } },
+          404: { type: "object", properties: { message: { type: "string" } } },
+        },
+      },
+    },
+    controller.updateMember
   );
 }
