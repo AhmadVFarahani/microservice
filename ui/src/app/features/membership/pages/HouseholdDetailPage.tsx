@@ -13,10 +13,12 @@ import Paper from "@mui/material/Paper";
 import {
   addMemberToHousehold,
   getHouseholdById,
-} from "../services/membershipApi";
+  updateMemberInHousehold,
+} from "../services/membership-api";
 import MemberCardList from "../components/MemberCardList";
 import MemberModal from "../components/MemberModal";
 import { MemberCreateCommand } from "../types/member-create-command";
+import { MemberUpdateCommand } from "../types/member-update-command";
 
 type Props = {
   householdId: string;
@@ -60,12 +62,24 @@ export default function HouseholdDetailPage({ householdId }: Props) {
       // ✅ Create new member
 
       await addMemberToHousehold(Number(householdId), data);
-      await mutate(`household-${householdId}`);
-      setModalOpen(false);
     } else {
-      // ❌ Optional: update logic for future version
-      alert("Update Member API not implemented in backend");
+      // UPDATE
+      const updateRequest: MemberUpdateCommand = {
+        memberId: selectedMember.id,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phoneNumber: data.phoneNumber,
+        dateOfBirth: data.dateOfBirth,
+        membershipType: data.membershipType,
+        membershipStartDate: data.membershipStartDate,
+        membershipExpiryDate: data.membershipExpiryDate,
+        email: data.email,
+      };
+      await updateMemberInHousehold(Number(householdId), updateRequest);
     }
+
+    await mutate(`household-${householdId}`);
+    setModalOpen(false);
   };
 
   if (isLoading) return <div>Loading household...</div>;

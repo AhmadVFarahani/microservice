@@ -68,12 +68,12 @@ export class HouseholdController {
 
     // ✅ VALIDATION
     if (!validateMemberUpdate(command)) {
-      console.log("Validation errors:", validateMemberUpdate.errors);
       return reply.status(400).send({
         message: "Validation error",
         errors: validateMemberUpdate.errors,
       });
     }
+
     const parsedCommand = {
       ...command,
       dateOfBirth: body.dateOfBirth ? new Date(body.dateOfBirth) : undefined,

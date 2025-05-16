@@ -3,6 +3,7 @@ import axios from "axios";
 import { Household } from "../types/household";
 import { MemberCreateCommand } from "../types/member-create-command";
 import { HouseholdCreateCommand } from "../types/household-create-command";
+import { MemberUpdateCommand } from "../types/member-update-command";
 
 // ✅ create Axios instance
 const api = axios.create({
@@ -40,4 +41,12 @@ export const addMemberToHousehold = async (
   data: MemberCreateCommand
 ): Promise<void> => {
   await api.post(`/households/${householdId}/members`, data);
+};
+
+// ✅ PATCH update member in household
+export const updateMemberInHousehold = async (
+  householdId: number,
+  data: MemberUpdateCommand
+): Promise<void> => {
+  await api.patch(`/households/${householdId}`, data);
 };

@@ -17,7 +17,7 @@ import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 
 import HouseholdModal from "../components/HouseholdModal";
-import { createHousehold, getAllHouseholds } from "../services/membershipApi";
+import { createHousehold, getAllHouseholds } from "../services/membership-api";
 import { HouseholdCreateCommand } from "../types/household-create-command";
 
 export default function HouseholdListPage() {
