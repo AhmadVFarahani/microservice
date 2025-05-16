@@ -1,6 +1,17 @@
 // src/infrastructure/database/migration.ts
 
 import { getSqlPool } from "./sql";
+export async function executeCreateDatabaseCommand(pool: any) {
+  // Example: Create Households table if not exists
+  await pool.request().query(`
+    IF NOT EXISTS (
+      SELECT name FROM sys.databases WHERE name = N'MembershipDB'
+    )
+    BEGIN
+      CREATE DATABASE [MembershipDB];
+    END
+  `);
+}
 
 export async function runMigrations() {
   const pool = await getSqlPool();

@@ -10,6 +10,7 @@ import householdRoutes from "./presentation/routes/household.route";
 import swaggerPlugin from "./plugins/swagger";
 import { runMigrations } from "./infrastructure/database/migration";
 import { globalErrorHandler } from "./plugins/global-error-handler";
+import { connectToDatabas } from "./infrastructure/database/sql";
 
 const app = Fastify({
   logger: true,
@@ -18,6 +19,7 @@ const app = Fastify({
 async function start() {
   try {
     // ✅ Step 1: Database migrations
+    await connectToDatabas();
     await runMigrations();
 
     // ✅ Step 2: Register CORS (important for Swagger + Frontend)
