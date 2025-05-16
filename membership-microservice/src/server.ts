@@ -25,6 +25,7 @@ async function start() {
     // ✅ Step 2: Register CORS (important for Swagger + Frontend)
     await app.register(cors, {
       origin: true, // ✅ allow all origins (or specify e.g. ["http://localhost:3000"])
+      methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     });
 
     // ✅ Step 3: Plugins
