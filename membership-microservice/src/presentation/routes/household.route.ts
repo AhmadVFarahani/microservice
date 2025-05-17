@@ -10,6 +10,7 @@ import {
   MemberUpdateCommandSchema,
 } from "../schemas/household.schemas";
 import { container } from "../../infrastructure/di/container";
+import { HouseholdUpdateCommandSchema } from "../../application/commands/household-update-command";
 
 export default async function (app: FastifyInstance) {
   const controller = container.resolve(HouseholdController);
@@ -102,7 +103,7 @@ export default async function (app: FastifyInstance) {
   );
 
   app.patch(
-    "/:householdId",
+    "/:householdId/members",
     {
       schema: {
         description: "Update an existing member of a household",
@@ -123,5 +124,24 @@ export default async function (app: FastifyInstance) {
       },
     },
     controller.updateMember
+  );
+  app.patch(
+    "/:id",
+    {
+      schema: {
+        description: "Update a household",
+        tags: ["Households"],
+        params: {
+          type: "object",
+          properties: { id: { type: "number" } },
+          required: ["id"],
+        },
+        body: HouseholdUpdateCommandSchema,
+        response: {
+          204: { type: "null" },
+        },
+      },
+    },
+    controller.update
   );
 }

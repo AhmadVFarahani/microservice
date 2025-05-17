@@ -8,6 +8,7 @@ export interface IHouseholdRepository {
   getById(id: number): Promise<Household | null>;
   save(household: Household): Promise<Household>;
   update(household: Household): Promise<void>;
+  cancelMembership(household: Household): Promise<void>;
   addMember(member: Member): Promise<void>;
   updateMember(member: Member): Promise<void>;
 }

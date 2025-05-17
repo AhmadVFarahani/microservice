@@ -9,6 +9,7 @@ import { Household } from "../../domain/entities/household";
 import { Member } from "../../domain/entities/member";
 import { MemberCreateCommand } from "../commands/member-create-command";
 import { MemberUpdateCommand } from "../commands/member-update-command";
+import { HouseholdUpdateCommand } from "../commands/household-update-command";
 
 @injectable()
 export class HouseholdService implements IHouseholdService {
@@ -48,9 +49,8 @@ export class HouseholdService implements IHouseholdService {
     if (!household) {
       throw new Error(`Household with ID ${id} not found`);
     }
-
     household.cancelHousehold();
-    await this.repository.update(household);
+    await this.repository.cancelMembership(household);
   }
 
   async updateMember(
@@ -135,5 +135,19 @@ export class HouseholdService implements IHouseholdService {
     };
 
     return householdDto;
+  }
+
+  async update(id: number, command: HouseholdUpdateCommand): Promise<void> {
+    const household = await this.repository.getById(id);
+    if (!household) throw new Error("Household not found");
+
+    if (command.streetAddress) household.streetAddress = command.streetAddress;
+    if (command.city) household.city = command.city;
+    if (command.province) household.province = command.province;
+    if (command.postalCode) household.postalCode = command.postalCode;
+    if (command.country) household.country = command.country;
+    if (command.phoneNumber) household.phoneNumber = command.phoneNumber;
+
+    await this.repository.update(household);
   }
 }

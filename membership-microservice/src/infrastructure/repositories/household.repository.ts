@@ -29,6 +29,8 @@ export class HouseholdRepository implements IHouseholdRepository {
         h.PhoneNumber,
         h.CreatedAt,
         h.UpdatedAt,
+        h.IsCancelled,
+        h.CancelledAt,
         m.Id AS MemberId,
         m.FirstName,
         m.LastName,
@@ -44,7 +46,6 @@ export class HouseholdRepository implements IHouseholdRepository {
       LEFT JOIN Members m ON h.Id = m.HouseholdId
       WHERE h.Id = @HouseholdId
     `);
-
     // Check if any records were returned
     return result.recordset.length > 0
       ? this.mapToHousholdWithMembers(result.recordset)
@@ -130,15 +131,14 @@ export class HouseholdRepository implements IHouseholdRepository {
     const pool = await getSqlPool();
     await pool
       .request()
-      .input("Id", sql.Int, household.id)
+      .input("id", household.id)
       .input("StreetAddress", sql.NVarChar(255), household.streetAddress)
       .input("City", sql.NVarChar(100), household.city)
       .input("Province", sql.NVarChar(10), household.province)
       .input("PostalCode", sql.NVarChar(10), household.postalCode)
       .input("Country", sql.NVarChar(50), household.country)
       .input("PhoneNumber", sql.NVarChar(20), household.phoneNumber ?? null)
-      .input("IsCancelled", sql.Bit, household.isCancelled ? 1 : 0)
-      .input("CancelledAt", sql.DateTime, household.cancelledAt ?? null).query(`
+      .input("updatedAt", new Date()).query(`
         UPDATE Households SET 
           StreetAddress = @StreetAddress,
           City = @City,
@@ -146,8 +146,21 @@ export class HouseholdRepository implements IHouseholdRepository {
           PostalCode = @PostalCode,
           Country = @Country,
           PhoneNumber = @PhoneNumber,
-          IsCancelled = @IsCancelled,
-          CancelledAt = @CancelledAt
+          updatedAt = @updatedAt
+        WHERE Id = @Id
+      `);
+  }
+
+  async cancelMembership(household: Household): Promise<void> {
+    const pool = await getSqlPool();
+    await pool
+      .request()
+      .input("id", household.id)
+      .input("IsCancelled", household.isCancelled)
+      .input("cancelledAt", household.cancelledAt).query(`
+        UPDATE Households SET 
+          IsCancelled = 1,
+          CancelledAt = @cancelledAt
         WHERE Id = @Id
       `);
   }
@@ -171,6 +184,7 @@ export class HouseholdRepository implements IHouseholdRepository {
   }
   private mapToHousholdWithMembers(rows: any): Household {
     const household: Household = this.mapToHoushold(rows[0]);
+    console.log("household", household);
     for (const member of rows) {
       if (!member.MemberId) {
         continue; // Skip if no member ID

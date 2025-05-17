@@ -15,6 +15,10 @@ import {
   MemberUpdateCommand,
   validateMemberUpdate,
 } from "../../application/commands/member-update-command";
+import {
+  HouseholdUpdateCommand,
+  validateHouseholdUpdateCommand,
+} from "../../application/commands/household-update-command";
 
 @injectable()
 export class HouseholdController {
@@ -49,6 +53,27 @@ export class HouseholdController {
 
     const result = await this.service.create(command);
     reply.send(result);
+  };
+
+  update = async (req: FastifyRequest, reply: FastifyReply) => {
+    const id = Number((req.params as any).id);
+    const command = req.body as HouseholdUpdateCommand;
+
+    // ✅ VALIDATION
+    if (!validateHouseholdCreate(command)) {
+      return reply.status(400).send({
+        message: "Validation error",
+        errors: validateHouseholdUpdateCommand.errors,
+      });
+    }
+
+    try {
+      await this.service.update(id, command);
+      reply.status(204).send();
+    } catch (err) {
+      console.error(err);
+      reply.status(500).send({ message: "Unexpected error" });
+    }
   };
 
   cancel = async (req: FastifyRequest, reply: FastifyReply) => {

@@ -3,7 +3,6 @@
 import { Member } from "./member";
 
 export class Household {
-
   constructor(
     public id: number | null,
     public streetAddress: string,
@@ -31,9 +30,6 @@ export class Household {
     if (!postalCode) {
       throw new Error("Postal code is required");
     }
-
-    this.isCancelled = false;
-    this.cancelledAt = null;
   }
 
   // Domain behavior: allow changing address
