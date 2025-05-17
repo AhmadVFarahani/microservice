@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 import type { Household } from "../types/household";
-
+import { Chip } from "@mui/material";
 import Button from "@mui/material/Button";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -17,7 +17,11 @@ import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 
 import HouseholdModal from "../components/HouseholdModal";
-import { createHousehold, getAllHouseholds } from "../services/membership-api";
+import {
+  cancelHouseholdById,
+  createHousehold,
+  getAllHouseholds,
+} from "../services/membership-api";
 import { HouseholdCreateCommand } from "../types/household-create-command";
 
 export default function HouseholdListPage() {
@@ -46,6 +50,16 @@ export default function HouseholdListPage() {
 
   const handleViewHousehold = (id: number) => {
     router.push(`/membership/households/${id}`);
+  };
+
+  const handleCancelHousehold = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to cancel this household?"
+    );
+    if (!confirmed) return;
+
+    await cancelHouseholdById(id);
+    await mutate("households");
   };
 
   if (isLoading) return <div>Loading households...</div>;
@@ -86,14 +100,41 @@ export default function HouseholdListPage() {
                 <TableCell>{household.city}</TableCell>
                 <TableCell>{household.province}</TableCell>
                 <TableCell>{household.postalCode}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => handleViewHousehold(household.id)}
-                  >
-                    View
-                  </Button>
+                <TableCell align="center">
+                  {household.isCancelled ? (
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleViewHousehold(household.id)}
+                      >
+                        View
+                      </Button>
+                      <Chip
+                        label="Cancelled"
+                        color="error"
+                        variant="outlined"
+                      />
+                    </Stack>
+                  ) : (
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleViewHousehold(household.id)}
+                      >
+                        View
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        color="error"
+                        onClick={() => handleCancelHousehold(household.id)}
+                      >
+                        Cancel
+                      </Button>
+                    </Stack>
+                  )}
                 </TableCell>
               </TableRow>
             ))}

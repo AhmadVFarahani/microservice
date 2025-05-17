@@ -50,3 +50,7 @@ export const updateMemberInHousehold = async (
 ): Promise<void> => {
   await api.patch(`/households/${householdId}`, data);
 };
+
+export const cancelHouseholdById = async (id: number): Promise<void> => {
+  await api.patch(`/households/${id}/cancel`);
+};
