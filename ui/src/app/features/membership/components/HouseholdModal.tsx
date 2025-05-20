@@ -9,19 +9,22 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import { HouseholdCreateCommand } from "../types/household-create-command";
+import { Household } from "../types/household";
 
 type HouseholdModalProps = {
+  mode: "create" | "edit";
   open: boolean;
   onClose: () => void;
   onSave: (data: HouseholdCreateCommand) => void;
-  initialData?: HouseholdCreateCommand;
+  houseHold?: Household;
 };
 
 export default function HouseholdModal({
+  mode,
   open,
   onClose,
   onSave,
-  initialData,
+  houseHold,
 }: HouseholdModalProps) {
   const [formData, setFormData] = useState<HouseholdCreateCommand>({
     streetAddress: "",
@@ -33,8 +36,16 @@ export default function HouseholdModal({
   });
 
   useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
+    debugger;
+    if (mode === "edit" && houseHold) {
+      setFormData({
+        streetAddress: houseHold.streetAddress,
+        city: houseHold.city,
+        province: houseHold.province,
+        postalCode: houseHold.postalCode,
+        country: houseHold.country,
+        phoneNumber: houseHold.phoneNumber,
+      });
     } else {
       setFormData({
         streetAddress: "",
@@ -45,7 +56,7 @@ export default function HouseholdModal({
         phoneNumber: "",
       });
     }
-  }, [initialData]);
+  }, [mode, houseHold]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -109,7 +120,7 @@ export default function HouseholdModal({
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button variant="contained" onClick={handleSubmit}>
-          Create
+          {mode === "create" ? "Create" : "Save"}
         </Button>
       </DialogActions>
     </Dialog>

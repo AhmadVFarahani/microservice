@@ -144,6 +144,8 @@ export default function HouseholdListPage() {
 
       {/* Household Modal */}
       <HouseholdModal
+        mode="create"
+        houseHold={undefined}
         open={isModalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveHousehold}

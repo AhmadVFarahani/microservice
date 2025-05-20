@@ -13,12 +13,16 @@ import Paper from "@mui/material/Paper";
 import {
   addMemberToHousehold,
   getHouseholdById,
+  updateHousehold,
   updateMemberInHousehold,
 } from "../services/membership-api";
 import MemberCardList from "../components/MemberCardList";
 import MemberModal from "../components/MemberModal";
 import { MemberCreateCommand } from "../types/member-create-command";
 import { MemberUpdateCommand } from "../types/member-update-command";
+import HouseholdModal from "../components/HouseholdModal";
+import { HouseholdCreateCommand } from "../types/household-create-command";
+import { HouseholdUpdateCommand } from "../types/household-update-command";
 
 type Props = {
   householdId: string;
@@ -36,24 +40,43 @@ export default function HouseholdDetailPage({ householdId }: Props) {
   const [selectedMember, setSelectedMember] = React.useState<Member | null>(
     null
   );
-  const [isModalOpen, setModalOpen] = React.useState(false);
+  const [isMemberModalOpen, setMemberModalOpen] = React.useState(false);
+  const [isHouseholdModalOpen, setHouseholdModalOpen] = React.useState(false);
 
   const handleEditHousehold = () => {
-    alert(`Edit Household ${householdId} clicked`);
+    setHouseholdModalOpen(true);
+  };
+
+  const handleEditHoushold = async (data: HouseholdCreateCommand) => {
+    // UPDATE
+    debugger;
+    const updateRequest: HouseholdUpdateCommand = {
+      id: Number(householdId),
+      streetAddress: data.streetAddress,
+      city: data.city,
+      province: data.province,
+      postalCode: data.postalCode,
+      country: data.country,
+      phoneNumber: data.phoneNumber,
+    };
+    await updateHousehold(Number(householdId), updateRequest);
+
+    await mutate(`household-${householdId}`);
+    setHouseholdModalOpen(false);
   };
 
   const handleAddMember = () => {
     setSelectedMember(null);
-    setModalOpen(true);
+    setMemberModalOpen(true);
   };
 
   const handleEditMember = (member: Member) => {
     setSelectedMember(member);
-    setModalOpen(true);
+    setMemberModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setModalOpen(false);
+    setMemberModalOpen(false);
     setSelectedMember(null);
   };
 
@@ -79,7 +102,7 @@ export default function HouseholdDetailPage({ householdId }: Props) {
     }
 
     await mutate(`household-${householdId}`);
-    setModalOpen(false);
+    setMemberModalOpen(false);
   };
 
   if (isLoading) return <div>Loading household...</div>;
@@ -126,9 +149,16 @@ export default function HouseholdDetailPage({ householdId }: Props) {
       <MemberModal
         mode={selectedMember ? "edit" : "create"}
         member={selectedMember ?? undefined}
-        open={isModalOpen}
+        open={isMemberModalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveMember}
+      />
+      <HouseholdModal
+        mode="edit"
+        houseHold={household}
+        open={isHouseholdModalOpen}
+        onClose={() => setHouseholdModalOpen(false)}
+        onSave={handleEditHoushold}
       />
     </Stack>
   );
